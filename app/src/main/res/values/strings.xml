@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HelpArticle</string>
+    <string name="loading_article">Loading article…</string>
+    <string name="no_article_to_show">No article to show</string>
+    <string name="you_may_be_offline_showing_last_available_data">You may be offline — showing last available data.</string>
+    <string name="no_articles_found">No articles found</string>
+    <string name="search_articles">Search articles…</string>
+    <string name="unable_to_load_article_no_internet">Unable to load article (no internet).</string>
+    <string name="server_error_while_loading_article">Server error while loading article.</string>
+    <string name="unexpected_error_while_loading_article">Unexpected error while loading article.</string>
+    <string name="no_internet_connection">No Internet connection.</string>
+    <string name="server_error">Server error</string>
+    <string name="something_went_wrong_please_try_again">Something went wrong. Please try again.</string>
+    <string name="login_issue">Login issue</string>
+</resources>
