@@ -1,5 +1,5 @@
 # HelpArticles
-Android app to show KMP cached articles .
+Android app to fetch mock data and cache using KMP module when online and showing cached data when offline before garbage colllector clean it.
 
 # Architecture 
  - MVVM with respect to Clean
@@ -13,7 +13,7 @@ Android app to show KMP cached articles .
 
    
 # KMP Cache
- -KMP module defined for caching feature using in memory maps.
+ -KMP module defined for caching feature using in memory maps regards to time limitation.
 
 
  
