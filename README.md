@@ -43,5 +43,6 @@ Android app to show KMP cached articles .
 
 
 
-# Animation is skipped.
+# Skipped
+- Interested in animation but it is skipped.
   
