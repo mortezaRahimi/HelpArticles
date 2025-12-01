@@ -6,8 +6,16 @@ Android app to show KMP cached articles .
 
 
 
+
+
+
 # DI
 - Manual dependency injection implemented regards to the light weight builds.
+
+
+
+
+
 
 
    
