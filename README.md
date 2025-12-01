@@ -4,8 +4,12 @@ Android app to show KMP cached articles .
 # Architecture 
  - MVVM with respect to Clean
 
+
+
 # DI
 - Manual dependency injection implemented regards to the light weight builds.
+
+
    
 # KMP Cache
  -KMP module defined for caching feature using in memory maps.
