@@ -67,6 +67,7 @@ dependencies {
     // Networking (MockWebServer OR Interceptor)
     implementation(libs.okhttp)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     implementation(libs.kotlinx.serialization.json)
 
