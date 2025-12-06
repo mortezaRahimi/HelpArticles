@@ -1,5 +1,5 @@
 # HelpArticles
-Android app to fetch mock data and cache using KMP module when online and showing cached data when offline before garbage colllector clean it.
+Android app to fetch mock data and cache using KMP module when online and showing cached data when offline before garbage collector clean it.
 
 # Architecture 
  - MVVM with respect to Clean
@@ -18,7 +18,8 @@ Android app to fetch mock data and cache using KMP module when online and showin
 
  
 # Auto refresh mechanism:
- - When connectivity returns ,if no cached data -> app will automatically reload article summaries . If cached data exist and stale will reload articles also.
+ - When connectivity returns ,if no cached data -> app will automatically reload article summaries .
+ - If cached data exist and stale will reload articles also.
 
 
 
@@ -34,7 +35,7 @@ Android app to fetch mock data and cache using KMP module when online and showin
 
 # Error handling
 - Backend errors handled by predicted ids.
-- Connectivity exception also handle with id and android conectivity manager.
+- Connectivity exception also handle with id and android connectivity manager.
 
 
 

@@ -1,6 +1,7 @@
 package com.mortex.helparticles.data.remote
 
 import com.mortex.helparticles.core.AppDispatchers
+import com.mortex.helparticles.core.DefaultAppDispatchers
 import com.mortex.helparticles.data.model.ArticleDetailDto
 import com.mortex.helparticles.data.model.ArticleSummaryDto
 import kotlinx.coroutines.delay
@@ -20,12 +21,13 @@ class FakeRemoteDataSrc(
     private val json: Json,
     baseUrl: String = "https://mortex.help.local/",
     private val artificialDelayMillis: Long = 250L,
-    private val appDispatchers: AppDispatchers,
+    private val appDispatchers: AppDispatchers = DefaultAppDispatchers,
 ) {
 
     private val baseHttpUrl = baseUrl.toHttpUrl()
 
     suspend fun fetchArticleSummaries(): List<ArticleSummaryDto> =
+
         get(
             pathSegments = listOf("articles"),
             delayMillis = artificialDelayMillis
@@ -43,7 +45,7 @@ class FakeRemoteDataSrc(
     * - parses success body into [T] using kotlinx.serialization
     * - parses error body into [BackendException] and throws it
     */
-    private suspend inline fun <reified T> get(
+    private suspend inline fun<reified T>  get(
         pathSegments: List<String>,
         delayMillis: Long = 0L,
     ): T = withContext(appDispatchers.io) {
@@ -78,7 +80,7 @@ class FakeRemoteDataSrc(
                 // Malformed payload → treat as backend error
                 throw BackendException(
                     errorCode = resp.code,
-                    errorTitle =  "Malformed response: ${e.message}",
+                    errorTitle = "Malformed response: ${e.message}",
                     message = "Failed to parse server response."
                 )
             }

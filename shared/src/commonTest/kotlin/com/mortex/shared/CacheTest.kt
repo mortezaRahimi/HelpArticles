@@ -16,7 +16,7 @@ class FakeTimeProvider(var current: Instant) : TimeProvider {
 class CacheTest {
 
     @Test
-    fun returnCachedListWhenRefresh() {
+    fun `return Cached List When Refresh`() {
         // Arrange
         val initialTime = Instant.fromEpochMilliseconds(0L)
         val fakeClock = FakeTimeProvider(initialTime)
@@ -35,7 +35,7 @@ class CacheTest {
     }
 
     @Test
-    fun returnNullWhenListIsStale() {
+    fun `return Null When List is Stale`() {
         // Arrange
         val initialTime = Instant.fromEpochMilliseconds(0L)
         val fakeClock = FakeTimeProvider(initialTime)
