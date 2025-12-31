@@ -3,6 +3,7 @@ package com.mortex.shared
 import com.mortex.shared.cache.ArticleCache
 import com.mortex.shared.cache.KmpCache
 import com.mortex.shared.util.TimeProvider
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,11 +17,11 @@ class FakeTimeProvider(var current: Instant) : TimeProvider {
 class CacheTest {
 
     @Test
-    fun `return Cached List When Refresh`() {
+    fun returnCachedListWhenRefresh() = runTest {
         // Arrange
         val initialTime = Instant.fromEpochMilliseconds(0L)
         val fakeClock = FakeTimeProvider(initialTime)
-        val cache = ArticleCache(KmpCache(), ttlMillis = 5000, timeProvider = fakeClock)
+        val cache = ArticleCache(KmpCache, ttlMillis = 5000, timeProvider = fakeClock)
 
         val list = listOf("A", "B", "C")
         cache.saveList(list)
@@ -35,11 +36,11 @@ class CacheTest {
     }
 
     @Test
-    fun `return Null When List is Stale`() {
+    fun returnNullWhenListIsStale() = runTest {
         // Arrange
         val initialTime = Instant.fromEpochMilliseconds(0L)
         val fakeClock = FakeTimeProvider(initialTime)
-        val cache = ArticleCache(KmpCache(), ttlMillis = 5000, timeProvider = fakeClock)
+        val cache = ArticleCache(KmpCache, ttlMillis = 5000, timeProvider = fakeClock)
 
         val list = listOf("A")
         cache.saveList(list)

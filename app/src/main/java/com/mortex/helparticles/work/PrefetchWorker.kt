@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.mortex.helparticles.di.AppContainer
 import com.mortex.helparticles.util.AppResult
 import com.mortex.helparticles.util.CachePolicy
+import com.mortex.shared.cache.KmpCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -16,11 +17,14 @@ import kotlinx.coroutines.withContext
 class PrefetchWorker(
     appContext: Context,
     params: WorkerParameters,
+    mainCache: KmpCache
+
 ) : CoroutineWorker(appContext, params) {
 
     private val container = AppContainer(
         ttlMillis = CachePolicy.ARTICLE_TTL_MS, // 1 Min TTL
-        appContext
+        appContext,
+        mainCache
     )
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {

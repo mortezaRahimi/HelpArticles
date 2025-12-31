@@ -7,21 +7,21 @@ import kotlinx.datetime.Instant
  *
  * Backed by in-memory Maps.
  */
-class KmpCache {
+object KmpCache {
 
     private var articleList: CacheItem<List<Any>>? = null
     private val articleDetails = mutableMapOf<String, CacheItem<Any>>()
 
-    fun saveArticleList(list: List<Any>, timestamp: Instant) {
+     fun saveArticleList(list: List<Any>, timestamp: Instant) {
         articleList = CacheItem(list, timestamp)
     }
 
 
-    fun getArticleList(): CacheItem<List<Any>>? {
+     fun getArticleList(): CacheItem<List<Any>>? {
         return articleList
     }
 
-    fun saveArticleDetail(
+     fun saveArticleDetail(
         id: String,
         detail: Any,
         timestamp: Instant,
@@ -29,7 +29,7 @@ class KmpCache {
         articleDetails[id] = CacheItem(detail, timestamp)
     }
 
-    fun getArticleDetail(id: String): CacheItem<Any>? {
+     fun getArticleDetail(id: String): CacheItem<Any>? {
         return articleDetails[id]
     }
 

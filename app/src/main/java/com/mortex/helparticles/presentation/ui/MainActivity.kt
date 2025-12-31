@@ -13,6 +13,7 @@ import com.mortex.helparticles.presentation.navigation.HelpNavHost
 import com.mortex.helparticles.presentation.ui.theme.HelpArticlesTheme
 import com.mortex.helparticles.util.CachePolicy
 import com.mortex.helparticles.work.WorkScheduler
+import com.mortex.shared.cache.KmpCache
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,8 @@ class MainActivity : ComponentActivity() {
 
                     val container = AppContainer(
                         CachePolicy.ARTICLE_TTL_MS,
-                        this@MainActivity
+                        this@MainActivity,
+                        KmpCache
                     )
 
                     HelpNavHost(

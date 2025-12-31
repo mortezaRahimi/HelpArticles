@@ -32,6 +32,7 @@ import okhttp3.OkHttpClient
 class AppContainer(
     ttlMillis: Long,
     context: Context,
+    kmpCache: KmpCache
 ) {
 
     private val dispatchers: AppDispatchers = DefaultAppDispatchers
@@ -41,10 +42,8 @@ class AppContainer(
     private val networkStatusMonitor: NetworkStatusMonitor =
         NetworkStatusMonitorDetector(context, networkChecker)
 
-    // 1) KMP in-memory cache
-    private val kmpCache = KmpCache()
 
-    // 2) Shared ArticleCache with TTL and TimeProvider
+    // 1) Shared ArticleCache with TTL and TimeProvider
     private val articleCache = ArticleCache(
         cache = kmpCache,
         ttlMillis = ttlMillis,
@@ -63,7 +62,7 @@ class AppContainer(
         .addInterceptor(MockInterceptor(json))
         .build()
 
-    // 3) Fake remote backend
+    // 2) Fake remote backend
     // HTTP-based remote data source
     private val newRemote = FakeRemoteDataSrc(
         client = okHttpClient,
@@ -71,7 +70,7 @@ class AppContainer(
         appDispatchers = dispatchers
     )
 
-    // 4) Repository
+    // 3) Repository
     private val repo = ArticleRepoImpl(
         remote = newRemote,
         cache = articleCache,
@@ -79,7 +78,7 @@ class AppContainer(
     )
 
 
-    // 5) Use cases exposed to UI / ViewModels
+    // 4) Use cases exposed to UI / ViewModels
     val getArticlesUseCase = GetArticlesUseCase(repo)
     val getArticleDetailUseCase = GetArticleDetailUseCase(repo)
     val refreshArticlesIfStaleUseCase = RefreshArticlesIfStaleUseCase(repo)

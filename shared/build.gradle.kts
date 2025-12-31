@@ -36,12 +36,14 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+
             }
         }
 
