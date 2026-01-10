@@ -14,7 +14,7 @@ import com.mortex.helparticles.util.AppResult
  * - fetch new data only if needed
  */
 class RefreshArticlesIfStaleUseCase(
-    private val repository: ArticlesRepository
+    private val repository: ArticlesRepository,
 ) {
 
     suspend operator fun invoke(): AppResult<List<ArticleSummary>> {

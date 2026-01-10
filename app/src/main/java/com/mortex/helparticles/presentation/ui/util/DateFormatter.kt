@@ -7,6 +7,7 @@ import kotlinx.datetime.toLocalDateTime
 
 fun Instant.toDate(): String {
     val dateTime = this.toLocalDateTime(TimeZone.currentSystemDefault())
-    return "${dateTime.date} - ${dateTime.hour}:${dateTime.minute}"
+    val min = if (dateTime.minute < 10) "0${dateTime.minute}" else dateTime.minute
+    return "${dateTime.date} - ${dateTime.hour}:${min}"
 }
 

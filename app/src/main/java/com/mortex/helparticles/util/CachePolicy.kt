@@ -9,8 +9,8 @@ object CachePolicy {
     /**
      * Time To Live for cached articles in milliseconds.
      *
-         @ARTICLE_TTL_MS  = 1 min.
+         @ARTICLE_TTL_MS  = 2 min.
      */
-    const val ARTICLE_TTL_MS: Long = 60_000L
+    const val ARTICLE_TTL_MS: Long = 120_000L
 
 }

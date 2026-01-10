@@ -4,10 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.mortex.helparticles.di.AppContainer
+import com.mortex.helparticles.domain.usecase.RefreshArticlesIfStaleUseCase
 import com.mortex.helparticles.util.AppResult
-import com.mortex.helparticles.util.CachePolicy
-import com.mortex.shared.cache.KmpCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,22 +15,19 @@ import kotlinx.coroutines.withContext
 class PrefetchWorker(
     appContext: Context,
     params: WorkerParameters,
-    mainCache: KmpCache
+    private val refreshArticlesIfStaleUseCase: RefreshArticlesIfStaleUseCase,
 
-) : CoroutineWorker(appContext, params) {
+    ) : CoroutineWorker(appContext, params) {
 
-    private val container = AppContainer(
-        ttlMillis = CachePolicy.ARTICLE_TTL_MS, // 1 Min TTL
-        appContext,
-        mainCache
-    )
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         Log.d("PrefetchWorker", "called")
-        val result = container.refreshArticlesIfStaleUseCase()
+        val result = refreshArticlesIfStaleUseCase()
         Log.d("PrefetchWorker", "result.isSuccess = ${result.isSuccess}")
         val success = result is AppResult.Success
-        return@withContext if (success) {
+
+        if (success) {
+            PrefetchNotifications.showSuccess(applicationContext)
             Result.success()
         } else {
             Result.retry()

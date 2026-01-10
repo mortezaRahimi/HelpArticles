@@ -9,11 +9,12 @@ class StalenessChecker(
     private val timeProvider: TimeProvider
 ) {
 
-    fun <T> isFresh(item: CacheItem<T>?): Boolean {
+    fun  isFresh(item: ArticleEntity?): Boolean {
         if (item == null) return false
 
         val now = timeProvider.now()
-        val age = now.toEpochMilliseconds() - item.timestamp.toEpochMilliseconds()
+        val age = now.toEpochMilliseconds() - item.updatedAt.toEpochMilliseconds()
         return age <= ttlMillis
     }
 }
+//check what time is saved in db whe writing

@@ -20,13 +20,13 @@ object WorkScheduler {
             .setRequiresBatteryNotLow(true)                    // avoid battery drain
             .build()
 
-        val request = PeriodicWorkRequestBuilder<PrefetchWorker>(1, TimeUnit.DAYS)
+        val request = PeriodicWorkRequestBuilder<PrefetchWorker>(15, TimeUnit.MINUTES)
             .setConstraints(constraints)
-            .setInitialDelay(1, TimeUnit.DAYS)
+            .setInitialDelay(15, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "daily_article_prefetch",
+            "15min_article_prefetch",
             ExistingPeriodicWorkPolicy.REPLACE,
             request
         )

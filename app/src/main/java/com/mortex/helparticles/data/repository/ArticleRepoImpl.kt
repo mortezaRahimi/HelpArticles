@@ -12,6 +12,7 @@ import com.mortex.helparticles.util.AppError
 import com.mortex.helparticles.util.AppResult
 import com.mortex.helparticles.util.NetworkErrorMapper
 import com.mortex.shared.cache.ArticleCache
+import com.mortex.shared.cache.ArticleEntity
 
 /**
  * Concrete implementation of ArticlesRepository.
@@ -28,15 +29,19 @@ import com.mortex.shared.cache.ArticleCache
 class ArticleRepoImpl(
     private val remote: FakeRemoteDataSrc,
     private val cache: ArticleCache,
-    private val networkChecker: NetworkChecker
+    private val networkChecker: NetworkChecker,
 ) : ArticlesRepository {
 
     override suspend fun getArticles(): AppResult<List<ArticleSummary>> {
 
         if (!networkChecker.isOnline()) {
-            val cached = cache.getFreshList<ArticleSummary>()
+            val cached = cache.getLastCache()
             return if (cached != null && cached.isNotEmpty()) {
-                AppResult.Success(cached, isOnline = false, fromCache = true)
+                AppResult.Success(
+                    cached.map { it.toSummaryDomain() }.sortedBy { it.id },
+                    isOnline = false,
+                    fromCache = true
+                )
             } else {
                 AppResult.Error(
                     NetworkErrorMapper.toAppError(ConnectivityException("Internet connection lost :("))
@@ -49,7 +54,7 @@ class ArticleRepoImpl(
             val domainList = dtos.map { ArticleMapper.toDomainSummary(it) }
 
             // Save into cache (domain-level objects)
-            cache.saveList(domainList)
+            cache.saveList(domainList.map { it.toEntity() })
 
             AppResult.Success(
                 data = domainList,
@@ -58,14 +63,14 @@ class ArticleRepoImpl(
             )
         } catch (t: Throwable) {
             // On any failure, fall back to cache first
-            val cached = cache.getFreshList<ArticleSummary>()
+            val cached = cache.getLastCache()
             if (!cached.isNullOrEmpty()) {
                 val appError = NetworkErrorMapper.toAppError(t)
                 val isOnline = appError !is AppError.Connectivity
 
                 // We have valid cached data, so serve it but mark origin
                 return AppResult.Success(
-                    data = cached,
+                    data = cached.map { it.toSummaryDomain() },
                     isOnline = isOnline,   // false for connectivity, true for backend errors
                     fromCache = true
                 )
@@ -82,9 +87,9 @@ class ArticleRepoImpl(
     ): AppResult<ArticleDetail> {
 
         if (!networkChecker.isOnline()) {
-            val cached = cache.getFreshDetail<ArticleDetail>(articleId)
+            val cached = cache.getFreshDetail(articleId)
             return if (cached != null) {
-                AppResult.Success(cached, isOnline = false, fromCache = true)
+                AppResult.Success(cached.toDetailDomain(), isOnline = false, fromCache = true)
             } else {
                 AppResult.Error(
                     NetworkErrorMapper.toAppError(ConnectivityException("No Internet connection"))
@@ -94,24 +99,25 @@ class ArticleRepoImpl(
 
         return try {
             val dto = remote.fetchArticleDetail(articleId)
-            val domain = ArticleMapper.toDomainDetail(dto)
+            val detail = ArticleMapper.toDomainDetail(dto)
 
-            cache.saveDetail(articleId, domain)
+            val summary = cache.getFreshList()?.findLast { it.id == detail.id }
+            cache.saveDetail(mergeDetailIntoEntity(detail = detail, existing = summary))
 
             AppResult.Success(
-                data = domain,
+                data = detail,
                 isOnline = true,
                 fromCache = false
             )
         } catch (t: Throwable) {
             // Try cached detail as a safe fallback
-            val cached = cache.getFreshDetail<ArticleDetail>(articleId)
+            val cached = cache.getFreshDetail(articleId)
             if (cached != null) {
                 val appError = NetworkErrorMapper.toAppError(t)
                 val isOnline = appError !is AppError.Connectivity
 
                 return AppResult.Success(
-                    data = cached,
+                    data = cached.toDetailDomain(),
                     isOnline = isOnline,   // false when we know it was a connectivity problem
                     fromCache = true
                 )
@@ -124,11 +130,11 @@ class ArticleRepoImpl(
 
     override suspend fun refreshArticlesIfStale(): AppResult<List<ArticleSummary>> {
         // By design, ArticleCache returns null if stale or missing
-        val cached = cache.getFreshList<ArticleSummary>()
+        val cached = cache.getFreshList()
         if (!cached.isNullOrEmpty()) {
             // Not stale -> nothing to do; return what we have
             return AppResult.Success(
-                data = cached,
+                data = cached.map { it.toSummaryDomain() },
                 fromCache = true,
                 isOnline = false // "unknown" here, but we didn't hit network this time
             )
@@ -138,7 +144,7 @@ class ArticleRepoImpl(
         return try {
             val dtos = remote.fetchArticleSummaries()
             val domainList = dtos.map { ArticleMapper.toDomainSummary(it) }
-            cache.saveList(domainList)
+            cache.saveList(domainList.map { it.toEntity() })
 
             AppResult.Success(
                 data = domainList,
@@ -150,5 +156,45 @@ class ArticleRepoImpl(
             val appError = NetworkErrorMapper.toAppError(t)
             AppResult.Error(appError)
         }
+    }
+
+    private fun ArticleEntity.toSummaryDomain(): ArticleSummary =
+        ArticleSummary(
+            id = id,
+            title = title,
+            summary = summary,
+            updatedAt = updatedAt
+        )
+
+    private fun ArticleEntity.toDetailDomain(): ArticleDetail {
+        return ArticleDetail(
+            id = id,
+            title = title,
+            content = content ?: "",
+            updatedAt = updatedAt
+        )
+    }
+
+    private fun ArticleSummary.toEntity(): ArticleEntity =
+        ArticleEntity(
+            id = id,
+            title = title,
+            summary = summary,
+            content = null,
+            updatedAt = updatedAt,
+        )
+
+    private fun mergeDetailIntoEntity(
+        existing: ArticleEntity?,
+        detail: ArticleDetail,
+    ): ArticleEntity {
+        val summaryValue = existing?.summary ?: detail.content.take(80)
+        return ArticleEntity(
+            id = detail.id,
+            title = detail.title,
+            summary = summaryValue,
+            content = detail.content,
+            updatedAt = detail.updatedAt
+        )
     }
 }
