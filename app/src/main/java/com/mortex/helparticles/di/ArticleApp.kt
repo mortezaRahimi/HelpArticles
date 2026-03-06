@@ -3,7 +3,6 @@ package com.mortex.helparticles.di
 import android.app.Application
 import androidx.work.Configuration
 import com.mortex.helparticles.util.CachePolicy
-import com.mortex.helparticles.work.PrefetchNotifications
 import com.mortex.helparticles.work.WorkScheduler
 import com.mortex.helparticles.work.WorkerFactory
 
@@ -18,7 +17,6 @@ class ArticleApp() : Application() , Configuration.Provider{
 
     override fun onCreate() {
         super.onCreate()
-        PrefetchNotifications.ensureChannel(this)
         WorkScheduler.scheduleDailyPrefetch(this)
     }
 

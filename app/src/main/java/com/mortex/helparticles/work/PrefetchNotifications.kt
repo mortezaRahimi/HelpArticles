@@ -37,10 +37,10 @@ object PrefetchNotifications {
         ensureChannel(context)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher) // ✅ add a proper small icon
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("Articles updated")
             .setContentText("Background refresh finished successfully.")
-            .setAutoCancel(false)
+            .setAutoCancel(true)
             .build()
 
         NotificationManagerCompat.from(context)
