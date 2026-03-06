@@ -43,7 +43,4 @@ Android app to fetch mock data and cache using KMP module when online and showin
 -Data created by mocked Http interceptor.
 
 
-
-# Skipped
-- Interested in animation but it is skipped.
   
