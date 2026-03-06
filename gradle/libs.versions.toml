@@ -21,15 +21,21 @@ coroutines = "1.9.0"
 serialization = "1.7.3"
 
 lifecycle = "2.8.5"
+sqliteVersion = "2.6.2"
 workmanager = "2.10.0"
 
 okhttp = "4.12.0"
 mockwebserver = "4.12.0"
 
+room = "2.8.4"
+sqlite = "2.6.2"
+ksp = "2.3.3"
+
 markdown = "0.37.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqliteVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -73,6 +79,11 @@ okhttp-mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.
 # Markdown/HTML renderer
 compose-markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3-android", version.ref = "markdown" }
 
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -81,3 +92,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinPluginSerialization" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }

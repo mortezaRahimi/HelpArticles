@@ -24,6 +24,7 @@ fun HelpNavHost(
     navController: NavHostController,
     container: AppContainer
 ) {
+
     NavHost(
         navController = navController,
         startDestination = Screen.Articles.route,
@@ -43,6 +44,9 @@ fun HelpNavHost(
             val viewModel: ArticlesViewModel = viewModel(factory = factory)
             val uiState by viewModel.uiState.collectAsState()
 
+            ObserveOnResume {
+                viewModel.loadArticles()
+            }
             ArticlesScreen(
                 uiState = uiState,
                 onArticleClick = { articleId ->

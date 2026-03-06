@@ -84,10 +84,29 @@ object JsonMockResponses {
                 {
                   "id": "3",
                   "title": "Offline & Error Handling",
-                  "content": "# Offline & Error Handling\n\nIf something goes wrong:\n\n- Turn off your internet connection and try to open an article.\n- The app should show cached content if available.\n- Check how connectivity vs backend errors are displayed in the UI.",
+                  "content": "- The app should show cached content if available.\n- Check how connectivity vs backend errors are displayed in the UI.",
                   "updatedAt": "$now"
                 }
             """.trimIndent()
+
+            "4" -> """
+                {
+                  "id": "4",
+                  "title": "Backend Error Example",
+                  "content": "Opening this article will trigger a 500 backend error if online.",
+                  "updatedAt": "$now"
+                }
+            """.trimIndent()
+
+            "5" -> """
+                {
+                  "id": "5",
+                  "title": "Connectivity Error Example",
+                  "content": "Opening this article will simulate a connectivity failure both online and offline.",
+                  "updatedAt": "$now"
+                }
+            """.trimIndent()
+
 
             // For "backend_error" and "connectivity_error" we don't return detail JSON here:
             // the interceptor will either return a backend error body or throw IOException.

@@ -29,7 +29,7 @@ class MockInterceptor(
         val path = url.encodedPath
 
         // Simulate connectivity error via special ID
-        if (path.endsWith("/connectivity_error")) {
+        if (path.endsWith("4")) {
             throw ConnectivityException("Simulated connectivity error from mock interceptor")
         }
 
@@ -42,7 +42,7 @@ class MockInterceptor(
             path.startsWith("/articles/") -> {
                 val id = path.substringAfterLast("/")
 
-                if (id == "backend_error") {
+                if (id == "5") {
                     backendErrorResponse(
                         chain = chain,
                         code = 500,

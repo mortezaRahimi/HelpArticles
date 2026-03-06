@@ -1,10 +1,14 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
 kotlin {
-
 
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
@@ -37,6 +41,9 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
+
             }
         }
 
@@ -49,6 +56,7 @@ kotlin {
 
         androidMain {
             dependencies {
+                implementation(libs.androidx.sqlite)
                 // Add Android-specific dependencies here. Note that this source set depends on
                 // commonMain by default and will correctly pull the Android artifacts of any KMP
                 // dependencies declared in commonMain.
@@ -65,4 +73,12 @@ kotlin {
 
     }
 
+}
+dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspAndroid", libs.kotlinx.datetime)
+
+//    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+//    add("kspIosX64", libs.androidx.room.compiler)
+//    add("kspIosArm64", libs.androidx.room.compiler)
 }

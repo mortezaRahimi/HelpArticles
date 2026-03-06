@@ -13,8 +13,10 @@ import com.mortex.helparticles.domain.usecase.GetArticleDetailUseCase
 import com.mortex.helparticles.domain.usecase.GetArticlesUseCase
 import com.mortex.helparticles.domain.usecase.ObserveNetworkStatusUseCase
 import com.mortex.helparticles.domain.usecase.RefreshArticlesIfStaleUseCase
+import com.mortex.helparticles.util.CachePolicy
 import com.mortex.shared.cache.ArticleCache
-import com.mortex.shared.cache.KmpCache
+import com.mortex.shared.cache.ArticleDB
+import com.mortex.shared.cache.DataBaseFactory
 import com.mortex.shared.util.DefaultTimeProvider
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -30,10 +32,11 @@ import okhttp3.OkHttpClient
  * - Use cases for the domain layer
  */
 class AppContainer(
-    ttlMillis: Long,
+    ttlMillis: Long = CachePolicy.ARTICLE_TTL_MS,
     context: Context,
-    kmpCache: KmpCache
 ) {
+
+    private val applicationContext = context.applicationContext
 
     private val dispatchers: AppDispatchers = DefaultAppDispatchers
     private val networkChecker = NetworkChecker(context)
@@ -42,13 +45,18 @@ class AppContainer(
     private val networkStatusMonitor: NetworkStatusMonitor =
         NetworkStatusMonitorDetector(context, networkChecker)
 
-
     // 1) Shared ArticleCache with TTL and TimeProvider
-    private val articleCache = ArticleCache(
-        cache = kmpCache,
-        ttlMillis = ttlMillis,
-        timeProvider = DefaultTimeProvider
-    )
+
+    private val db: ArticleDB = DataBaseFactory(applicationContext).createDataBase()
+
+    // 2) Initialize the Cache (Wrapping the DB)
+    val kmpCache: ArticleCache by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        ArticleCache(
+            cache = db,
+            ttlMillis = ttlMillis,
+            timeProvider = DefaultTimeProvider
+        )
+    }
 
 
     // JSON serializer (kotlinx.serialization)
@@ -73,7 +81,7 @@ class AppContainer(
     // 3) Repository
     private val repo = ArticleRepoImpl(
         remote = newRemote,
-        cache = articleCache,
+        cache = kmpCache,
         networkChecker
     )
 

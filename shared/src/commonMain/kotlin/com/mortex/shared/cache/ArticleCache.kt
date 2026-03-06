@@ -9,40 +9,48 @@ import kotlinx.coroutines.sync.withLock
  */
 @Suppress("UNCHECKED_CAST")
 class ArticleCache(
-    private val cache: KmpCache,
+    private val cache: ArticleDB,
     private val ttlMillis: Long,
     private val timeProvider: TimeProvider,
     private val mutex: Mutex = Mutex(),
 ) {
     private val stalenessChecker = StalenessChecker(ttlMillis, timeProvider)
 
-    suspend fun <T> saveList(list: List<T>) {
+    suspend fun saveList(list: List<ArticleEntity>) {
         mutex.withLock {
-            cache.saveArticleList(list as List<Any>, timeProvider.now())
+            cache.articleDao().saveArticles(list)
         }
     }
 
-    suspend fun <T> getFreshList(): List<T>? {
+    suspend fun getLastCache(): List<ArticleEntity>? {
         mutex.withLock {
-            val item = cache.getArticleList()
-            return if (stalenessChecker.isFresh(item)) {
-                item!!.value as List<T>
+            return cache.articleDao().getArticles()
+        }
+    }
+
+    suspend fun getFreshList(): List<ArticleEntity>? {
+        mutex.withLock {
+            val items = cache.articleDao().getArticles()
+            if (items == null) return null
+            val firstItem = items.first()
+            return if (stalenessChecker.isFresh(firstItem)) {
+                items
             } else null
         }
     }
 
-    suspend fun <T> saveDetail(id: String, detail: T) {
+    suspend fun saveDetail(detail: ArticleEntity) {
         mutex.withLock {
-            cache.saveArticleDetail(id, detail as Any, timeProvider.now())
+            cache.articleDao().saveDetail(detail)
         }
 
     }
 
-    suspend fun <T> getFreshDetail(id: String): T? {
+    suspend fun getFreshDetail(id: String): ArticleEntity? {
         mutex.withLock {
-            val item = cache.getArticleDetail(id)
+            val item = cache.articleDao().getArticleDetail(id)
             return if (stalenessChecker.isFresh(item)) {
-                item!!.value as T
+                item
             } else null
         }
     }
